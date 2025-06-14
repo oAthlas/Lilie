@@ -43,8 +43,37 @@ class AIChatApp(ctk.CTk):
         self.start_voice_animation(welcome)
 
     def show_settings(self):
-        # ... código igual ao original, mas usando save_api_settings e test_api_key dos módulos ...
-        pass
+        import tkinter as tk
+        import customtkinter as ctk
+        from modules.settings import save_api_settings
+        from modules.ai_client import test_api_key
+
+        settings_window = ctk.CTkToplevel(self)
+        settings_window.title("Configurações da API")
+        settings_window.geometry("400x200")
+        settings_window.resizable(False, False)
+
+        label = ctk.CTkLabel(settings_window, text="Chave da API OpenRouter:", font=("Segoe UI", 16))
+        label.pack(pady=(30, 5))
+
+        self.api_entry = ctk.CTkEntry(settings_window, width=320)
+        self.api_entry.insert(0, self.api_key)
+        self.api_entry.pack(pady=10)
+
+        btn_frame = ctk.CTkFrame(settings_window, fg_color="transparent")
+        btn_frame.pack(pady=20)
+
+        save_btn = ctk.CTkButton(
+            btn_frame, text="Salvar",
+            command=lambda: save_api_settings(self, settings_window)
+        )
+        save_btn.pack(side="left", padx=10)
+
+        test_btn = ctk.CTkButton(
+            btn_frame, text="Testar chave",
+            command=lambda: test_api_key(self)
+        )
+        test_btn.pack(side="left", padx=10)
 
     def send_message(self):
         if self.is_speaking:
