@@ -1,5 +1,5 @@
 # main.py
-from app import AIChatApp
+from modules.main_window import AIChatApp
 
 if __name__ == "__main__":
     app = AIChatApp()
