@@ -1,10 +1,10 @@
 # Lilie - Assistente Virtual IA de Bolso
 
-Lilie é um projeto desenvolvido para a feira de ciências da escola, com o objetivo de criar um assistente virtual compacto, inteligente e acessível. A proposta é oferecer uma IA de bolso, capaz de interagir com o usuário de forma simples e eficiente, realizando tarefas do dia a dia a partir de comandos de voz ou texto.
+Lilie é um projeto desenvolvido para a feira de ciências da escola, com o objetivo de criar um assistente virtual compacto, inteligente e acessível. A proposta é oferecer uma IA de bolso, capaz de rodar em dispositivos de baixo custo e fácil de usar.
 
 ## Objetivo
 
-O projeto busca prototipar um assistente virtual baseado em IA que possa rodar em dispositivos de baixo custo, como o Raspberry Pi Zero 2 W, tornando-o portátil e prático para uso cotidiano. A ideia é que, com uma frase, o usuário possa acionar uma ação instantaneamente, tornando a experiência fluida e intuitiva.
+O projeto busca prototipar um assistente virtual baseado em IA que possa rodar em dispositivos de baixo custo, como o Raspberry Pi Zero 2 W, tornando-o portátil e prático para uso cotidiano. A ideia é democratizar o acesso a assistentes inteligentes.
 
 ## Funcionalidades
 
@@ -67,3 +67,19 @@ Lilie4.9/
 ---
 
 Este projeto está em desenvolvimento e aberto a sugestões
+
+---
+
+## Sobre o Autor
+
+Fala devs ^^
+
+Tá curioso sobre mim ou sobre o projeto? Vamo lá então...
+
+Eu sou o Athlas (meu nome real é Elder Luiz), tenho 16 anos e comecei a programar tem pouco mais de 1 mês. Se você leu o readme.md da Lilie já entendeu que esse projeto nasceu para uma feira de ciências.
+
+Eu comecei esse projeto sem nem saber o que era o VSCode, não sabia de absolutamente nada de programação, mas eu sabia uma coisa: Pesquisar! Eu nunca gostei de estudar e maximizar o máximo uma nota, mas sempre gostei de aprender, e programar é sobre isso: aprender a resolver problemas.
+
+Esse projeto deixou de ser só um trabalho de escola, a Lilie é meu projeto pessoal que vou aperfeiçoar pelo resto da minha vida, é minha primeira criação e eu tenho orgulho disso. Se você leu até aqui, obrigado por apoiar de alguma forma :)
+
+Athlas, o Dev que programava sem saber uma única linha de código - 14/06/2025
