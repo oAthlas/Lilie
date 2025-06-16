@@ -9,6 +9,7 @@ from modules.ui_components import setup_ui
 from modules.voice import VoiceEngine
 from modules.calendar_integration import GoogleCalendar
 from modules.event_parser import EventParser
+from modules.google_search import buscar_google_cse
 
 class AIChatApp(ctk.CTk):
     def __init__(self):
@@ -88,6 +89,24 @@ class AIChatApp(ctk.CTk):
         self.send_btn.configure(state="disabled")
         self.user_input.configure(state="disabled")
         self.status_bar.configure(text="Lilie está pensando...")
+
+        # Busca online automática para perguntas comuns
+        if any(x in user_message.lower() for x in ["pesquisar", "quem", "como", "quando", "onde", "o que", "por que"]):
+            def do_search():
+                import json
+                with open("config.json") as f:
+                    config = json.load(f)
+                api_key = config.get("google_cse_api_key", "")
+                cx = config.get("google_cse_cx", "")
+                resultado_online = buscar_google_cse(user_message, api_key, cx)
+                from modules.chat_ui import add_message_to_ui
+                add_message_to_ui(self, "Lilie", f"📡 Resultado da busca online:\n{resultado_online}", "ai")
+                self.status_bar.configure(text="Pronto para conversar")
+                self.send_btn.configure(state="normal")
+                self.user_input.configure(state="normal")
+                self.start_voice_animation(resultado_online)
+            threading.Thread(target=do_search, daemon=True).start()
+            return
 
         if any(palavra in user_message.lower() for palavra in [
             "agendar", "marcar", "agendamento", "marcação", 

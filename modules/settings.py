@@ -17,8 +17,15 @@ def save_api_settings(app, settings_window):
         return
     app.api_key = new_api_key
     try:
+        # Carrega o config.json atual, atualiza só a api_key e salva de volta
+        try:
+            with open("config.json", "r") as f:
+                config = json.load(f)
+        except Exception:
+            config = {}
+        config["api_key"] = app.api_key
         with open("config.json", "w") as f:
-            json.dump({"api_key": app.api_key}, f)
+            json.dump(config, f, indent=2, ensure_ascii=False)
         app.status_bar.configure(text="Pronto para conversar")
         settings_window.destroy()
         tk.messagebox.showinfo("Sucesso", "Configurações salvas com sucesso!", parent=app)
