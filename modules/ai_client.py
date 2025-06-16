@@ -15,7 +15,7 @@ def test_api_key(app):
         data = {
             "model": "deepseek/deepseek-r1:free",
             "messages": [{"role": "user", "content": "Olá"}],
-            "temperature": 0.1
+            "temperature": 0.95
         }
         resp = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data, timeout=10)
         if resp.status_code == 200:
@@ -31,10 +31,15 @@ def get_ai_response(app, message):
             "Authorization": f"Bearer {app.api_key}",
             "Content-Type": "application/json"
         }
+        # Adicione instrução de resposta curta ao prompt
+        curta_message = (
+            "Responda de forma direta e esboçe emoções. Jamais use emojis. Se lhe for dito algo que você não tem certeza, faça perguntas ao usuário. "
+            f"{message}"
+        )
         data = {
-            "model": "deepseek/deepseek-r1:free",  # Modelo DeepSeek R1
-            "messages": app.chat_history + [{"role": "user", "content": message}],
-            "temperature": 0.7
+            "model": "deepseek/deepseek-r1:free",
+            "messages": app.chat_history + [{"role": "user", "content": curta_message}],
+            "temperature": 0.3
         }
         resp = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data, timeout=30)
         if resp.status_code == 200:

@@ -3,13 +3,20 @@ import tkinter as tk
 import threading
 from modules.settings import load_settings, save_api_settings
 from modules.ai_client import test_api_key, get_ai_response
-from modules.chat_ui import add_message_to_ui
+from modules.chat_ui import add_message_to_ui, update_lilie_labels_wraplength
 from modules.event_manager import processar_evento
 from modules.ui_components import setup_ui
 from modules.voice import VoiceEngine
 from modules.calendar_integration import GoogleCalendar
 from modules.event_parser import EventParser
 from modules.google_search import buscar_google_cse
+from playsound import playsound
+
+def play_send_sound():
+    try:
+        playsound("send.mp3", block=False)
+    except Exception as e:
+        print(f"Erro ao tocar som: {e}")
 
 class AIChatApp(ctk.CTk):
     def __init__(self):
@@ -37,6 +44,7 @@ class AIChatApp(ctk.CTk):
         setup_ui(self)
         load_settings(self)
         self.after(500, self.show_welcome_message)
+        self.bind("<Configure>", lambda e: update_lilie_labels_wraplength(self))
 
     def show_welcome_message(self):
         welcome = "Olá, sou a Lilie, sua assistente virtual pronta para te ajudar em qualquer atividade do seu dia!"
@@ -84,6 +92,7 @@ class AIChatApp(ctk.CTk):
             return
         self.voice_engine.stop()
         add_message_to_ui(self, "Você", user_message, "user")
+        play_send_sound()
         self.chat_history.append({"role": "user", "content": user_message})
         self.user_input.delete(0, tk.END)
         self.send_btn.configure(state="disabled")
@@ -91,20 +100,31 @@ class AIChatApp(ctk.CTk):
         self.status_bar.configure(text="Lilie está pensando...")
 
         # Busca online automática para perguntas comuns
-        if any(x in user_message.lower() for x in ["pesquisar", "quem", "como", "quando", "onde", "o que", "por que"]):
+        pesquisa_palavras = ["pesquisar", "quem", "como", "quando", "onde", "o que", "por que"]
+        user_message_lower = user_message.lower().strip()
+        if any(user_message_lower.startswith(x) for x in pesquisa_palavras):
             def do_search():
                 import json
+                from modules.ai_client import get_ai_response
                 with open("config.json") as f:
                     config = json.load(f)
                 api_key = config.get("google_cse_api_key", "")
                 cx = config.get("google_cse_cx", "")
                 resultado_online = buscar_google_cse(user_message, api_key, cx)
-                from modules.chat_ui import add_message_to_ui
-                add_message_to_ui(self, "Lilie", f"📡 Resultado da busca online:\n{resultado_online}", "ai")
+                # Remova ou comente a linha abaixo para não exibir o resultado bruto:
+                # from modules.chat_ui import add_message_to_ui
+                # add_message_to_ui(self, "Lilie", f"📡 Resultado da busca online:\n{resultado_online}", "ai")
+                prompt_refinado = (
+                    f"Com base nas informações abaixo, responda de forma direta, objetiva e resumida à pergunta: '{user_message}'. "
+                    "Responda em no máximo 3 linhas ou 300 caracteres. "
+                    "Use apenas as informações fornecidas, sem inventar dados. "
+                    "Se não encontrar a resposta, diga 'Não encontrei a resposta com base nas informações pesquisadas.'\n\n"
+                    f"Informações encontradas:\n{resultado_online}"
+                )
+                get_ai_response(self, prompt_refinado)
                 self.status_bar.configure(text="Pronto para conversar")
                 self.send_btn.configure(state="normal")
                 self.user_input.configure(state="normal")
-                self.start_voice_animation(resultado_online)
             threading.Thread(target=do_search, daemon=True).start()
             return
 
@@ -112,7 +132,7 @@ class AIChatApp(ctk.CTk):
             "agendar", "marcar", "agendamento", "marcação", 
             "consulta", "reunião", "compromisso", "evento",
             "encontro", "visita", "sessão", "entrevista",
-            "criar evento", "marcar horário", "agenda"
+            "criar evento", "marcar horário", "agenda" "agende"
         ]):
             threading.Thread(target=processar_evento, args=(self, user_message), daemon=True).start()
         else:

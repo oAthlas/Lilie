@@ -10,7 +10,7 @@ def processar_evento(app, mensagem):
             evento["inicio"],
             evento.get("fim", "")
         )
-        resposta = f"Evento '{evento['titulo']}' agendado com sucesso!\n[Ver no Google Agenda]({link})"
+        resposta = f"Evento '{evento['titulo']}' agendado com sucesso!"
         from modules.chat_ui import add_message_to_ui
         add_message_to_ui(app, "Lilie", resposta, "ai")
         app.status_bar.configure(text="Pronto para conversar")
