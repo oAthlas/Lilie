@@ -10,11 +10,13 @@ from modules.voice import VoiceEngine
 from modules.calendar_integration import GoogleCalendar
 from modules.event_parser import EventParser
 from modules.google_search import buscar_google_cse
+from modules.utils import resource_path
 from playsound import playsound
 
 def play_send_sound():
     try:
-        playsound("send.mp3", block=False)
+        from modules.utils import resource_path
+        playsound(resource_path("send.mp3"), block=False)
     except Exception as e:
         print(f"Erro ao tocar som: {e}")
 
@@ -22,7 +24,7 @@ class AIChatApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         try:
-            self.iconbitmap("lilie.ico")
+            self.iconbitmap(resource_path("lilie.ico"))
         except Exception as e:
             print(f"Não foi possível definir o ícone: {e}")
         self.title("Lilie - Assistente AI")
