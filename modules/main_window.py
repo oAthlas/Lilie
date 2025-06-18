@@ -12,6 +12,7 @@ from modules.event_parser import EventParser
 from modules.google_search import buscar_google_cse
 from modules.utils import resource_path
 from playsound import playsound
+import os
 
 def play_send_sound():
     try:
@@ -23,10 +24,6 @@ def play_send_sound():
 class AIChatApp(ctk.CTk):
     def __init__(self):
         super().__init__()
-        try:
-            self.iconbitmap(resource_path("lilie.ico"))
-        except Exception as e:
-            print(f"Não foi possível definir o ícone: {e}")
         self.title("Lilie - Assistente AI")
         self.geometry("1100x600")  # Aumentei a largura para acomodar a barra lateral
         self.minsize(800, 400)
@@ -50,6 +47,12 @@ class AIChatApp(ctk.CTk):
         self.bind("<Configure>", lambda e: update_lilie_labels_wraplength(self))
         self.loading_animation_running = False
         self.loading_animation_step = 0
+
+        from modules.utils import resource_path
+        try:
+            self.iconbitmap(resource_path("lilie.ico"))
+        except Exception as e:
+            print(f"Não foi possível definir o ícone: {e}")
 
     def toggle_sidebar(self):
         if self.sidebar_visible:
