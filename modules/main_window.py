@@ -58,8 +58,8 @@ class AIChatApp(ctk.CTk):
             self.menu_btn.place(x=10, y=10)
             self.menu_btn.configure(text="☰")
         else:
-            # Mostra a barra lateral sobre o conteúdo
-            self.sidebar.place(x=0, y=0, relheight=1)
+            # Mostra a barra lateral do lado esquerdo
+            self.show_sidebar()
             self.menu_btn.place_forget()
             self.menu_btn.configure(text="✕")
         self.sidebar_visible = not self.sidebar_visible
@@ -75,32 +75,64 @@ class AIChatApp(ctk.CTk):
         from modules.settings import save_api_settings
         from modules.ai_client import test_api_key
 
+        # Carregar valores atuais
+        import json
+        try:
+            with open("config.json", "r") as f:
+                config = json.load(f)
+        except Exception:
+            config = {}
+        api_key = config.get("api_key", "")
+        google_cse_api_key = config.get("google_cse_api_key", "")
+        google_cse_cx = config.get("google_cse_cx", "")
+
         settings_window = ctk.CTkToplevel(self)
         settings_window.title("Configurações da API")
-        settings_window.geometry("400x200")
+        settings_window.geometry("420x340")
         settings_window.resizable(False, False)
+        settings_window.grab_set()
+        settings_window.focus_force()
 
-        label = ctk.CTkLabel(settings_window, text="Chave da API OpenRouter:", font=("Segoe UI", 16))
-        label.pack(pady=(30, 5))
+        label1 = ctk.CTkLabel(settings_window, text="Chave da API OpenRouter:", font=("Segoe UI", 16))
+        label1.pack(pady=(20, 5))
+        self.api_entry = ctk.CTkEntry(settings_window, width=360)
+        self.api_entry.insert(0, api_key)
+        self.api_entry.pack(pady=5)
 
-        self.api_entry = ctk.CTkEntry(settings_window, width=320)
-        self.api_entry.insert(0, self.api_key)
-        self.api_entry.pack(pady=10)
+        label2 = ctk.CTkLabel(settings_window, text="Google CSE API Key:", font=("Segoe UI", 16))
+        label2.pack(pady=(15, 5))
+        self.google_api_entry = ctk.CTkEntry(settings_window, width=360)
+        self.google_api_entry.insert(0, google_cse_api_key)
+        self.google_api_entry.pack(pady=5)
+
+        label3 = ctk.CTkLabel(settings_window, text="Google CSE CX:", font=("Segoe UI", 16))
+        label3.pack(pady=(15, 5))
+        self.google_cx_entry = ctk.CTkEntry(settings_window, width=360)
+        self.google_cx_entry.insert(0, google_cse_cx)
+        self.google_cx_entry.pack(pady=5)
 
         btn_frame = ctk.CTkFrame(settings_window, fg_color="transparent")
-        btn_frame.pack(pady=20)
+        btn_frame.pack(pady=25)
 
         save_btn = ctk.CTkButton(
             btn_frame, text="Salvar",
-            command=lambda: save_api_settings(self, settings_window)
+            command=lambda: save_api_settings(self, settings_window),
+            height=40, width=120, corner_radius=20,
+            font=ctk.CTkFont(family="Segoe UI", size=16, weight="bold"),
+            border_width=1,
+            border_color="#3a3a3a"
         )
-        save_btn.pack(side="left", padx=10)
+        save_btn.pack(side="left", padx=20)
 
         test_btn = ctk.CTkButton(
             btn_frame, text="Testar chave",
-            command=lambda: test_api_key(self)
+            command=lambda: test_api_key(self),
+            height=40, width=140, corner_radius=20,
+            font=ctk.CTkFont(family="Segoe UI", size=16, weight="bold"),
+            border_width=1,
+            border_color="#3a3a3a"
         )
-        test_btn.pack(side="left", padx=10)
+        test_btn.pack(side="left", padx=20)
 
     def start_loading_animation(self, text="Lilie está pensando..."):
         self.loading_animation_running = True
@@ -212,6 +244,8 @@ class AIChatApp(ctk.CTk):
         about_window.title("Sobre a Lilie")
         about_window.geometry("400x300")
         about_window.resizable(False, False)
+        about_window.grab_set()
+        about_window.focus_force()
 
         # Título
         title = ctk.CTkLabel(
@@ -258,6 +292,8 @@ class AIChatApp(ctk.CTk):
         help_window.title("Ajuda")
         help_window.geometry("500x400")
         help_window.resizable(False, False)
+        help_window.grab_set()
+        help_window.focus_force()
 
         # Título
         title = ctk.CTkLabel(

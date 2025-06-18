@@ -26,13 +26,21 @@ def setup_ui(app):
         command=app.toggle_sidebar,
         fg_color="transparent",
         hover_color="#232323",
-        font=ctk.CTkFont(family=font_family, size=20)
+        font=ctk.CTkFont(family=font_family, size=20),
+        border_width=1,
+        border_color="#3a3a3a",
+        corner_radius=8
     )
     app.menu_btn.place(x=10, y=10)
 
     # Barra lateral (drawer), inicialmente oculta
     app.sidebar = ctk.CTkFrame(app, width=200, corner_radius=0, fg_color="#1a1a1a")
     app.sidebar.place_forget()
+
+    # Função para mostrar a barra lateral corretamente
+    def show_sidebar():
+        app.sidebar.place(x=0, y=0, relheight=1)
+    app.show_sidebar = show_sidebar
 
     # Frame horizontal para logo e botão X
     app.sidebar_top = ctk.CTkFrame(app.sidebar, fg_color="transparent")
@@ -56,7 +64,10 @@ def setup_ui(app):
         command=app.toggle_sidebar,
         fg_color="transparent",
         hover_color="#232323",
-        font=ctk.CTkFont(family=font_family, size=18)
+        font=ctk.CTkFont(family=font_family, size=18),
+        border_width=1,
+        border_color="#3a3a3a",
+        corner_radius=8
     )
     app.close_btn.pack(side="right", padx=(0, 10), pady=0)
 
@@ -70,7 +81,10 @@ def setup_ui(app):
             fg_color="transparent",
             hover_color="#232323",
             height=40,
-            font=ctk.CTkFont(family=font_family, size=16)
+            font=ctk.CTkFont(family=font_family, size=16),
+            border_width=1,
+            border_color="#3a3a3a",
+            corner_radius=8
         )
         btn.pack(fill="x", padx=20, pady=5)
         return btn
@@ -99,7 +113,10 @@ def setup_ui(app):
         fg_color="transparent",
         hover_color="#232323",
         height=40,
-        font=ctk.CTkFont(family=font_family, size=16)
+        font=ctk.CTkFont(family=font_family, size=16),
+        border_width=1,
+        border_color="#3a3a3a",
+        corner_radius=8
     )
     app.help_btn.pack(fill="x", padx=20, pady=10, side="bottom")
 
@@ -150,7 +167,9 @@ def setup_ui(app):
         corner_radius=20,
         fg_color="#232323",
         hover_color="#3a3a3a",
-        text_color="#ffffff"
+        text_color="#ffffff",
+        border_width=1,
+        border_color="#3a3a3a"
     )
     app.send_btn.pack(side="right", padx=20, pady=20)
 
@@ -164,3 +183,6 @@ def setup_ui(app):
     app.status_bar.pack(fill="x", padx=20, pady=(0, 10))
 
     app.user_input.focus_set()
+
+    # Por padrão, sidebar fica oculta se sidebar_visible for False
+    app.sidebar.place_forget()
