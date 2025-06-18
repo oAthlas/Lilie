@@ -28,8 +28,8 @@ class AIChatApp(ctk.CTk):
         except Exception as e:
             print(f"Não foi possível definir o ícone: {e}")
         self.title("Lilie - Assistente AI")
-        self.geometry("900x600")
-        self.minsize(600, 400)
+        self.geometry("1100x600")  # Aumentei a largura para acomodar a barra lateral
+        self.minsize(800, 400)
         self.resizable(True, True)
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
@@ -38,6 +38,7 @@ class AIChatApp(ctk.CTk):
         self.selected_model = "openai/gpt-3.5-turbo"
         self.is_speaking = False
         self.chat_history = []
+        self.sidebar_visible = True  # Controle da visibilidade da barra lateral
         
         self.voice_engine = VoiceEngine()
         self.calendar = GoogleCalendar()
@@ -47,6 +48,21 @@ class AIChatApp(ctk.CTk):
         load_settings(self)
         self.after(500, self.show_welcome_message)
         self.bind("<Configure>", lambda e: update_lilie_labels_wraplength(self))
+        self.loading_animation_running = False
+        self.loading_animation_step = 0
+
+    def toggle_sidebar(self):
+        if self.sidebar_visible:
+            # Esconde a barra lateral
+            self.sidebar.place_forget()
+            self.menu_btn.place(x=10, y=10)
+            self.menu_btn.configure(text="☰")
+        else:
+            # Mostra a barra lateral sobre o conteúdo
+            self.sidebar.place(x=0, y=0, relheight=1)
+            self.menu_btn.place_forget()
+            self.menu_btn.configure(text="✕")
+        self.sidebar_visible = not self.sidebar_visible
 
     def show_welcome_message(self):
         welcome = "Olá, sou a Lilie, sua assistente virtual pronta para te ajudar em qualquer atividade do seu dia!"
@@ -86,6 +102,24 @@ class AIChatApp(ctk.CTk):
         )
         test_btn.pack(side="left", padx=10)
 
+    def start_loading_animation(self, text="Lilie está pensando..."):
+        self.loading_animation_running = True
+        self.loading_animation_step = 0
+        self._animate_loading(text)
+
+    def _animate_loading(self, text):
+        if not self.loading_animation_running:
+            return
+        dots = "●" * ((self.loading_animation_step % 3) + 1)
+        spaces = " " * (3 - len(dots))
+        self.status_bar.configure(text=f"{text} {dots}{spaces}")
+        self.loading_animation_step += 1
+        self.after(400, lambda: self._animate_loading(text))
+
+    def stop_loading_animation(self):
+        self.loading_animation_running = False
+        self.status_bar.configure(text="Pronto para conversar")
+
     def send_message(self):
         if self.is_speaking:
             return
@@ -99,7 +133,7 @@ class AIChatApp(ctk.CTk):
         self.user_input.delete(0, tk.END)
         self.send_btn.configure(state="disabled")
         self.user_input.configure(state="disabled")
-        self.status_bar.configure(text="Lilie está pensando...")
+        self.start_loading_animation()  # <-- INICIA ANIMAÇÃO
 
         # Busca online automática para perguntas comuns
         pesquisa_palavras = ["pesquisar", "quem", "como", "quando", "onde", "o que", "por que"]
@@ -148,14 +182,136 @@ class AIChatApp(ctk.CTk):
 
     def on_voice_end(self):
         self.is_speaking = False
-        self.status_bar.configure(text="Pronto para conversar")
+        self.stop_loading_animation()  # <-- PARA ANIMAÇÃO
         self.send_btn.configure(state="normal")
         self.user_input.configure(state="normal")
         self.user_input.focus_set()
 
     def show_error(self, msg):
+        self.stop_loading_animation()  # <-- PARA ANIMAÇÃO EM CASO DE ERRO
         self.status_bar.configure(text="Erro: " + str(msg))
         self.send_btn.configure(state="normal")
         self.user_input.configure(state="normal")
         tk.messagebox.showerror("Erro", msg, parent=self)
         self.user_input.focus_set()
+
+    def handle_ai_response(self, ai_response):
+        add_message_to_ui(self, "Lilie", ai_response, "ai")
+        self.stop_loading_animation()  # Para a animação assim que o texto aparece
+        self.start_voice_animation(ai_response)  # Inicia a fala normalmente
+
+    def show_home(self):
+        # Limpa o chat frame
+        for widget in self.chat_frame.winfo_children():
+            widget.destroy()
+        # Mostra a mensagem de boas-vindas
+        self.show_welcome_message()
+
+    def show_about(self):
+        about_window = ctk.CTkToplevel(self)
+        about_window.title("Sobre a Lilie")
+        about_window.geometry("400x300")
+        about_window.resizable(False, False)
+
+        # Título
+        title = ctk.CTkLabel(
+            about_window,
+            text="Lilie - Assistente Virtual IA",
+            font=ctk.CTkFont(family="Segoe UI Semibold", size=24, weight="bold"),
+            text_color="#b388ff"
+        )
+        title.pack(pady=(20, 10))
+
+        # Versão
+        version = ctk.CTkLabel(
+            about_window,
+            text="Versão 5.1",
+            font=ctk.CTkFont(family="Segoe UI", size=16),
+            text_color="#a0a0a0"
+        )
+        version.pack(pady=(0, 20))
+
+        # Descrição
+        description = ctk.CTkLabel(
+            about_window,
+            text="Lilie é um assistente virtual inteligente desenvolvido para a feira de ciências do colégio.\n\n"
+                 "Desenvolvido com Python e CustomTkinter, utilizando APIs de IA para fornecer respostas inteligentes "
+                 "e interações naturais.",
+            font=ctk.CTkFont(family="Segoe UI", size=14),
+            text_color="#ffffff",
+            wraplength=350,
+            justify="center"
+        )
+        description.pack(pady=10, padx=20)
+
+        # Créditos
+        credits = ctk.CTkLabel(
+            about_window,
+            text="Desenvolvido por Athlas (Elder Luiz)",
+            font=ctk.CTkFont(family="Segoe UI", size=12),
+            text_color="#a0a0a0"
+        )
+        credits.pack(pady=(20, 0))
+
+    def show_help(self):
+        help_window = ctk.CTkToplevel(self)
+        help_window.title("Ajuda")
+        help_window.geometry("500x400")
+        help_window.resizable(False, False)
+
+        # Título
+        title = ctk.CTkLabel(
+            help_window,
+            text="Como usar a Lilie",
+            font=ctk.CTkFont(family="Segoe UI Semibold", size=24, weight="bold"),
+            text_color="#b388ff"
+        )
+        title.pack(pady=(20, 10))
+
+        # Frame para o conteúdo
+        content_frame = ctk.CTkScrollableFrame(help_window, fg_color="transparent")
+        content_frame.pack(fill="both", expand=True, padx=20, pady=10)
+
+        # Seções de ajuda
+        sections = [
+            ("Conversando com a Lilie", 
+             "• Digite suas mensagens na caixa de texto\n"
+             "• Pressione Enter ou clique em Enviar\n"
+             "• A Lilie responderá usando IA"),
+            
+            ("Agendamento de Eventos",
+             "• Digite frases como 'agendar reunião amanhã às 14h'\n"
+             "• A Lilie criará o evento no Google Calendar\n"
+             "• Você receberá um link para o evento"),
+            
+            ("Pesquisas",
+             "• Faça perguntas começando com 'quem', 'como', 'quando', etc.\n"
+             "• A Lilie buscará informações online\n"
+             "• As respostas serão baseadas em fontes confiáveis"),
+            
+            ("Configurações",
+             "• Configure sua chave de API em Configurações\n"
+             "• A chave é necessária para o funcionamento da IA\n"
+             "• Você pode testar a chave antes de salvar")
+        ]
+
+        for title_text, content in sections:
+            section_frame = ctk.CTkFrame(content_frame, fg_color="#232323", corner_radius=10)
+            section_frame.pack(fill="x", pady=5, padx=5)
+
+            section_title = ctk.CTkLabel(
+                section_frame,
+                text=title_text,
+                font=ctk.CTkFont(family="Segoe UI Semibold", size=16),
+                text_color="#b388ff"
+            )
+            section_title.pack(pady=(10, 5), padx=10, anchor="w")
+
+            section_content = ctk.CTkLabel(
+                section_frame,
+                text=content,
+                font=ctk.CTkFont(family="Segoe UI", size=14),
+                text_color="#ffffff",
+                justify="left"
+            )
+            section_content.pack(pady=(0, 10), padx=10, anchor="w")

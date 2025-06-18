@@ -25,16 +25,15 @@ def test_api_key(app):
     except Exception as e:
         tk.messagebox.showerror("Erro", f"Falha ao conectar: {e}", parent=app)
 
-def get_ai_response(app, message):
+def get_ai_response(app, prompt):
     try:
         headers = {
             "Authorization": f"Bearer {app.api_key}",
             "Content-Type": "application/json"
         }
-        # Adicione instrução de resposta curta ao prompt
         curta_message = (
             "Responda de forma direta e esboçe emoções. Jamais use emojis. Se lhe for dito algo que você não tem certeza, faça perguntas ao usuário. "
-            f"{message}"
+            f"{prompt}"
         )
         data = {
             "model": "deepseek/deepseek-r1:free",
@@ -45,9 +44,7 @@ def get_ai_response(app, message):
         if resp.status_code == 200:
             resposta = resp.json()["choices"][0]["message"]["content"]
             app.chat_history.append({"role": "assistant", "content": resposta})
-            add_message_to_ui(app, "Lilie", resposta, "ai")
-            app.status_bar.configure(text="Pronto para conversar")
-            app.start_voice_animation(resposta)
+            app.handle_ai_response(resposta)  # <-- Centraliza exibição, animação e voz
         else:
             app.show_error(f"Erro na resposta da IA: {resp.text}")
     except Exception as e:
