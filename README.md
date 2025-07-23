@@ -9,17 +9,22 @@ O projeto busca prototipar um assistente virtual baseado em IA que possa rodar e
 ## Funcionalidades
 
 - **Interface Simples e Moderna:** Desenvolvida em Python com [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) para uma experiência visual agradável.
+- **Barra Lateral (Sidebar):** Navegação fácil entre Início, Configurações, Sobre e Ajuda.
+- **Animação de Carregamento:** Feedback visual enquanto a IA processa respostas.
 - **Integração com IA:** Utiliza modelos de linguagem avançados via API para responder perguntas, conversar e executar comandos.
-- **Integração com Google Calendar:** Permite agendar eventos e compromissos por comando de voz ou texto.
+- **Respostas por Voz:** A Lilie lê as respostas em voz alta usando síntese de fala.
+- **Integração com Google Calendar:** Permite agendar eventos e compromissos por comando de voz ou texto, com extração inteligente de datas e horários.
+- **Busca Online Automática:** Perguntas iniciadas por "quem", "como", "quando", etc. são pesquisadas automaticamente no Google e resumidas pela IA.
 - **Extensível:** Estrutura modular para fácil adição de novas integrações, como relógio, Spotify e outros dispositivos.
 - **Compatibilidade:** Pensado para rodar em sistemas Windows e, futuramente, em Raspberry Pi Zero 2 W.
 
 ## Estrutura do Projeto
 
 ```
-Lilie4.9/
-├── app.py
+Lilie5.0/
+├── Lilie.py
 ├── config.json
+├── credentials.json
 ├── modules/
 │   ├── main_window.py
 │   ├── settings.py
@@ -29,12 +34,18 @@ Lilie4.9/
 │   ├── ui_components.py
 │   ├── voice.py
 │   ├── calendar_integration.py
-│   └── event_parser.py
-└── README.md
+│   ├── event_parser.py
+│   ├── google_search.py
+│   └── utils.py
+├── lilie.ico
+├── send.mp3
+├── README.md
+├── requirements.txt
+└── token.pickle
 ```
 
-- **app.py:** Inicializa e executa a aplicação.
-- **modules/**: Contém todos os módulos responsáveis por interface, integração com IA, voz, calendário, parser de eventos e configurações.
+- **Lilie.py:** Inicializa e executa a aplicação.
+- **modules/**: Contém todos os módulos responsáveis por interface, integração com IA, voz, calendário, parser de eventos, busca online, configurações e utilidades.
 
 ## Como Executar
 
@@ -49,7 +60,7 @@ Lilie4.9/
 3. **Execução:**  
    - No terminal, execute:
      ```
-     python app.py
+     python Lilie.py
      ```
 
 ## Futuro do Projeto
@@ -61,8 +72,8 @@ Lilie4.9/
 
 ## Equipe
 
-- **Desenvolvimento Principal:** Athlas (Elder Luiz)
-- **Equipe de Apoio:** 3 colegas do colégio, responsáveis por documentação, pesquisa teórica e suporte.
+- **Desenvolvimento Principal:** Elder Luiz - Desenvolvedor geral do projeto
+- **Equipe de Apoio:** Isabela Pereira e Lígia Luíza - Análise, pesquisas, revisões e controle externo do projeto
 
 ---
 
@@ -72,7 +83,7 @@ Este projeto está em desenvolvimento e aberto a sugestões
 
 ## Sobre o Autor
 
-Fala devs ^^
+Fala devs (ou leigos) ^^
 
 Tá curioso sobre mim ou sobre o projeto? Vamo lá então...
 
@@ -80,6 +91,6 @@ Eu sou o Athlas (meu nome real é Elder Luiz), tenho 16 anos e comecei a program
 
 Eu comecei esse projeto sem nem saber o que era o VSCode, não sabia de absolutamente nada de programação, mas eu sabia uma coisa: Pesquisar! Eu nunca gostei de estudar e maximizar o máximo uma nota, mas sempre gostei de aprender, e programar é sobre isso: aprender a resolver problemas.
 
-Esse projeto deixou de ser só um trabalho de escola, a Lilie é meu projeto pessoal que vou aperfeiçoar pelo resto da minha vida, é minha primeira criação e eu tenho orgulho disso. Se você leu até aqui, obrigado por apoiar de alguma forma :)
+Esse projeto deixou de ser só um trabalho de escola, a Lilie é meu projeto pessoal que vou aperfeiçoar pelo resto da minha vida, é minha primeira criação e eu tenho orgulho disso. Se você leu até aqui, obrigado, já é um grande apoio :)
 
-Athlas, o Dev que programava sem saber uma única linha de código - 14/06/2025
+Athlas, o Monarca - 15/06/2025
